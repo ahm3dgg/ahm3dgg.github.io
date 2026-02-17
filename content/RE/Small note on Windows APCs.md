@@ -29,7 +29,7 @@ be used to flush the APC queue doing so will execute all APCs the currently held
 for normal kernel-mode APCs, if a normal kernel-mode APC is executing further normal kernel-mode APCs are disabled until that APC finishes its execution. You may also want to read about special APCs.
 
 Since this is a small note, and obviously I didn't cover all the details, 
-I will just leave you with some uses of APCs in the kernel and maybe you can try to think about them and why using APCs are actually a great solution to them ;)
+I will just leave you with some uses of APCs in the kernel (I referenced ReactOS and WRK here, things might have changed in later windows versions) and maybe you can try to think about them and why using APCs are actually a great solution to them ;)
 
 ```
 - NtSuspendThread (APC That waits on a Semaphore)
@@ -40,5 +40,10 @@ I will just leave you with some uses of APCs in the kernel and maybe you can try
 
 - NtTerminateThread (APC That lets the Thread Terminate it self)
 
-- LdrInitializeThunk also runs from an APC: NtCreateThread -> PspCreateThread -> KeInitThread (with PspUserThreadStartup) -> PspUserThreadStartup -> KiInitializeUserApc (with SYSTEM_DLL.LoaderInitRoutine = LdrInitializeThunk)
+- LdrInitializeThunk also runs from an APC:
+  NtCreateThread 
+	  -> PspCreateThread 
+		  -> KeInitThread (with PspUserThreadStartup) 
+			  -> PspUserThreadStartup 
+				  -> KiInitializeUserApc (with SYSTEM_DLL.LoaderInitRoutine = LdrInitializeThunk)
 ```
