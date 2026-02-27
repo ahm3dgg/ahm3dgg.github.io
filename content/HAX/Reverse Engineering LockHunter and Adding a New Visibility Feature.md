@@ -105,8 +105,8 @@ int wmain(int argc, wchar_t* argv[])
 	NtClose(FileHandle);
 
 	printf("Close Section Handle ?\n");
-	NtClose(Section);
 	getchar();
+	NtClose(Section);
 
 	printf("Unmap View of Section ?\n");
 	getchar();
