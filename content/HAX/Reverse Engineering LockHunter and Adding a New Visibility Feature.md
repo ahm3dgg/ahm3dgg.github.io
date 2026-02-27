@@ -598,9 +598,12 @@ Here is a description of what you are looking at
 
 - Device Type: This is the device type you set when calling `IoCreateDevice`, one driver can create multiple device objects, for instance a network driver like `tcpip.sys` can create multiple device objects each for each protocol `TCP`, `UDP`, `IP`, `RawIP`.
 
+
 - Function: Identifies the function or action to take, in this example it asking to query file object info
 
+
 - Method: Identifies how the usermode application and the driver will perform I/O, in this case we have `METHOD_BUFFERED`, which is called Buffered I/O, which in case of writes, the kernel will copy the user input buffer into a system buffer allocated from a non-paged pool, and in case of writes the kernel copies the system buffer into the usermode buffer, the same system buffer is used for reads/writes, and its located at `Irp->AssociatedIrp.SystemBuffer`, and its size is maximum between input buffer and output buffer passed in `NtDeviceIoControlFile`, other Methods can be found on MSDN
+
 
 - Access: Indicates the type of access that a caller must request when opening the file object that represents the device, the possible values are `FILE_ANY_ACCESS`, `FILE_READ_DATA` and `FILE_WRITE_DATA`
 
