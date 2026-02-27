@@ -517,7 +517,7 @@ Now Let's look at `UsrQueryFileObjectInfo`, since this what the usermode applica
 ```cpp
 NTSTATUS __stdcall UsrQueryFileObjectInfo(PVOID DeviceContext, PIRP Irp, PIO_STACK_LOCATION IoStackLocation)
 {
-  PHUNTER_FIND_FILENAME_RESPONSE SystemBuffer; // [rsp+30h] [rbp-58h]
+  PHUNTER_QUERY_FILE_OBJECT_INFO_RESPONSE SystemBuffer; // [rsp+30h] [rbp-58h]
   PDEVICE_OBJECT Object; // [rsp+40h] [rbp-48h]
   PFILE_OBJECT FileObject; // [rsp+58h] [rbp-30h]
   POBJECT_NAME_INFORMATION ObjectNameInfo; // [rsp+60h] [rbp-28h]
@@ -525,14 +525,14 @@ NTSTATUS __stdcall UsrQueryFileObjectInfo(PVOID DeviceContext, PIRP Irp, PIO_STA
   unsigned int Length; // [rsp+6Ch] [rbp-1Ch]
   unsigned int ObjectNameLength; // [rsp+70h] [rbp-18h]
 
-  SystemBuffer = (PHUNTER_FIND_FILENAME_RESPONSE)Irp->AssociatedIrp.SystemBuffer;
+  SystemBuffer = (PHUNTER_QUERY_FILE_OBJECT_INFO_RESPONSE)Irp->AssociatedIrp.SystemBuffer;
   if ( IoStackLocation->Parameters.DeviceIoControl.InputBufferLength != 8
     || IoStackLocation->Parameters.Read.Length != sizeof(_HUNTER_QUERY_FILE_OBJECT_INFO_RESPONSE) )
   {
     return STATUS_INVALID_PARAMETER;
   }
   FileObject = *(PFILE_OBJECT *)Irp->AssociatedIrp.SystemBuffer;
-  SystemBuffer->FileNamePresent = 0;
+  SystemBuffer->FilePathPresent = 0;
   SystemBuffer->DiskVolumePresent = 0;
   if ( FileObject->Type != 5 )
     return STATUS_INVALID_PARAMETER;
@@ -557,7 +557,7 @@ NTSTATUS __stdcall UsrQueryFileObjectInfo(PVOID DeviceContext, PIRP Irp, PIO_STA
     Length = 0x200;
   memset(SystemBuffer->FileName, 0, sizeof(SystemBuffer->FileName));
   memmove(SystemBuffer->FileName, FileObject->FileName.Buffer, Length);
-  SystemBuffer->FileNamePresent = 1;
+  SystemBuffer->FilePathPresent = 1;
   Object = FileObject->DeviceObject;
   if ( Object->Type == 3 )
   {
@@ -615,7 +615,7 @@ after doing that, the output will look much cleaner, I think the field names are
 ```cpp
 typedef struct _HUNTER_QUERY_FILE_OBJECT_INFO_RESPONSE
 {
-	BOOLEAN FileNamePresent;
+	BOOLEAN FilePathPresent;
 	UINT16 Type;
 	UINT16 Size;
 	PVOID DeviceObject;
@@ -919,7 +919,7 @@ NTSTATUS NTAPI HunterQueryFileInfoByPointer(PVOID DeviceContext, PIRP Irp, PIO_S
 		return STATUS_INVALID_PARAMETER;
 	}
 
-	SystemBuffer->FileNamePresent = FALSE;
+	SystemBuffer->FilePathPresent = FALSE;
 	SystemBuffer->DiskVolumePresent = FALSE;
 
 	if (FileObject->Type != 5)
@@ -954,7 +954,7 @@ NTSTATUS NTAPI HunterQueryFileInfoByPointer(PVOID DeviceContext, PIRP Irp, PIO_S
 
 	RtlZeroMemory(SystemBuffer->FilePath, sizeof(SystemBuffer->FilePath));
 	RtlCopyMemory(SystemBuffer->FilePath, FileObject->FileName.Buffer, Length);
-	SystemBuffer->FileNamePresent = TRUE;
+	SystemBuffer->FilePathPresent = TRUE;
 	DeviceObject = FileObject->DeviceObject;
 	
 	if (DeviceObject->Type == 3)
@@ -1134,7 +1134,7 @@ typedef uint64  PVOID;  // 64-bit pointer (change to uint32 for 32-bit targets)
 typedef wchar_t WCHAR;
 
 typedef struct {
-    BOOLEAN     FileNamePresent;
+    BOOLEAN     FilePathPresent;
     UINT16      Type;
     UINT16      Size;
     PVOID       DeviceObject;
@@ -1150,8 +1150,8 @@ typedef struct {
     UINT64      CurrentByteOffset;
     UINT32      Waiters;
     UINT32      Busy;
-    WCHAR       FileName[256];
-    BOOLEAN     ObjectNamePresent;
+    WCHAR       FilePath[256];
+    BOOLEAN     DiskVolumePresent;
     UINT16      DeviceObject_Type;
     UINT16      DeviceObject_Size;
     UINT32      DeviceObject_RefCount;
@@ -1159,13 +1159,13 @@ typedef struct {
     UINT32      DeviceObject_Flags;
     UINT32      DeviceObject_Characteristics;
     UINT32      DeviceObject_DeviceType;
-    WCHAR       ObjectName[256];
+    WCHAR       DiskVolumePath[256];
 } HUNTER_FIND_FILENAME_RESPONSE <read=ReadEntry>;
 
 // Display function - shows filename in the tree view
 string ReadEntry(HUNTER_FIND_FILENAME_RESPONSE &e) {
-    if (e.FileNamePresent)
-        return WStringToString(e.FileName);
+    if (e.FilePathPresent)
+        return WStringToString(e.FilePath);
     return "<no filename>";
 }
 
