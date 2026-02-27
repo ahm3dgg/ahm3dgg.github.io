@@ -861,6 +861,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 ```
 ### Coding The Driver
 
+[Kernel Driver Github Link](https://github.com/ahm3dgg/HunterxHunter/tree/main)
+
 Now for the Fun part ! In the following section I will be describing how I went about reimplementing the kernel driver, and the different design decisions I have taken, so its my first time writing a kernel driver so I might have written bad code.
 
 I won't be presenting the full code of the driver, however I will be presenting the relevant parts, but first let me explain some of the limitations my driver has, remember when we found out that when we actually start mapping the section using `NtMapViewOfSection`, even if we closed the file handle and the section handle, the file will still be locked. I haven't really implemented that because its not very trivial honestly closing a handle is not the same as unmapping a section view, and it will require many changes in the usermode application, that wasn't really in my scope, So I will stick here with just introducing visibility in open Section Handles beside File Handles, its still going to be useful, suppose a section view was unmapped but the handle wasn't closed, it will still catch that, after all I was doing that for the sake of learning, so I am not expecting anyone to use it.
@@ -1095,3 +1097,7 @@ NTSTATUS GetGoldFromMemory(PDRIVER_OBJECT DriverObject)
 To end this blog, since its really long now, there is actually a Denial of Service vulnerability in the driver, that can be used to trigger a BSOD (Blue Screen of Death), if you went back to the original driver, you will see that it trusts the usermode application, and assumes that it will only receive File object pointers, and then starts reading data from it, this is wrong, the author should have found a way to check for the received file object, maybe like we did using `ObGetObjectType`, and make sure its a File Object before proceeding, and if not return a `STATUS_INVALID_PARAMETER`, not doing though will cause a `PAGE_FAULT_IN_NONPAGED_AREA` exception.
 
 ![[Pasted image 20260227074538.png]]
+
+That's it.
+
+~ ahm3dgg
