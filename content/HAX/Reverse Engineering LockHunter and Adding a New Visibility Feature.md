@@ -111,6 +111,9 @@ int wmain(int argc, wchar_t* argv[])
 	printf("Unmap View of Section ?\n");
 	getchar();
 	NtUnmapViewOfSection(NtCurrentProcess(), BaseAddress);
+	
+	printf("Exit ?\n");
+	getchar();
 }
 ```
 
