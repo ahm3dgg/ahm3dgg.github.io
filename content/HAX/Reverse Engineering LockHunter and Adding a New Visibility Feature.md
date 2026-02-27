@@ -1163,21 +1163,21 @@ typedef struct {
     UINT32      DeviceObject_Characteristics;
     UINT32      DeviceObject_DeviceType;
     WCHAR       DiskVolumePath[256];
-} HUNTER_FIND_FILENAME_RESPONSE <read=ReadEntry>;
+} HUNTER_QUERY_FILE_OBJECT_INFO_RESPONSE <read=ReadEntry>;
 
 // Display function - shows filename in the tree view
-string ReadEntry(HUNTER_FIND_FILENAME_RESPONSE &e) {
+string ReadEntry(HUNTER_QUERY_FILE_OBJECT_INFO_RESPONSE &e) {
     if (e.FilePathPresent)
         return WStringToString(e.FilePath);
     return "<no filename>";
 }
 
 // Calculate number of entries from file size
-local uint64 entrySize = sizeof(HUNTER_FIND_FILENAME_RESPONSE);
+local uint64 entrySize = sizeof(HUNTER_QUERY_FILE_OBJECT_INFO_RESPONSE);
 local uint64 numEntries = FileSize() / entrySize;
 
 // Parse the array
-HUNTER_FIND_FILENAME_RESPONSE entries[numEntries] <optimize=true>;
+HUNTER_QUERY_FILE_OBJECT_INFO_RESPONSE entries[numEntries] <optimize=true>;
 ```
 ### Potential DOS Vulnerability in the Driver
 
