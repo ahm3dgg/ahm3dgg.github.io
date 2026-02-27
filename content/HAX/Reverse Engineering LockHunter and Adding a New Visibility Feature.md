@@ -14,7 +14,7 @@ Section Objects are basically Windows way of implementing shared memory and memo
 - Page-File Backed Sections
 - File Backed Sections
 
-Page-File Backed Sections are basically shared memory buffers, that processes can you use to communicate between each either as a method of doing Interprocess-Communication, they are named Page-File Backed, because when its time for the working set manager to free up some physical memory, if the page is part of a page-file backed section and is dirty meaning that it was modified, its content will be written to the page file on the system, which is typically located at `C:\Windows\pagefile.sys`
+Page-File Backed Sections are basically shared memory buffers, that processes can you use to communicate between each either as a method of doing Interprocess-Communication, they are named Page-File Backed, because when its time for the working set manager to free up some physical memory, if the page is part of a page-file backed section and is dirty meaning that it was modified, its content will be written to the page file on the system, which is typically located at `C:\pagefile.sys`
 
 File Backed Sections are memory mapped files, they can be data files or executables, when its an executable we call it an image backed section, they are called File Backed because they refer to an actual file on disk something like `travis_scoot_top_hits.txt` or `don_toliver_scareware.exe`, for memory mapped files that are data files, when they are dirty or have been modified and was mapped as read/write, the content is reflected to the file on disk, however when they are mapped as as read-only writes won't reflect on the file on disk.
 
