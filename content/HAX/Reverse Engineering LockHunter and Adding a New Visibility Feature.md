@@ -366,7 +366,7 @@ __int64 __fastcall QueryFileObjectInfo(
   BOOL Result; // eax
   DWORD BytesReturned; // [rsp+44h] [rbp+44h] BYREF
   bool vars48; // [rsp+48h] [rbp+48h]
-  _HUNTER_FIND_FILENAME_RESPONSE OutBuffer; // [rsp+49h] [rbp+49h] BYREF
+  _HUNTER_QUERY_FILE_OBJECT_INFO_RESPONSE OutBuffer; // [rsp+49h] [rbp+49h] BYREF
   PVOID InBuffer; // [rsp+48Fh] [rbp+48Fh] BYREF
   struct _SYSTEM_HANDLE_TABLE_ENTRY_INFO HandleEntry; // [rsp+498h] [rbp+498h]
 
